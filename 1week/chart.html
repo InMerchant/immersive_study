@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawCharts);
+      
+      function drawCharts() {
+        // AJAX 요청 생성
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'chart.php', true);
+
+        // 요청 완료 후 처리할 콜백 함수
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            var jsonData = JSON.parse(xhr.responseText);
+
+            // 도넛 차트 데이터
+            var donutData = new google.visualization.DataTable();
+            donutData.addColumn('string', 'Tags');
+            donutData.addColumn('number', 'Count');
+            donutData.addColumn({ type: 'string', role: 'tooltip' });
+
+            // 열차트 데이터
+            var barData = new google.visualization.DataTable();
+            barData.addColumn('string', 'Tags');
+            barData.addColumn('number', 'Count');
+
+            for (var i = 0; i < jsonData.length; i++) {
+              var tag = jsonData[i][0];
+              var count = parseInt(jsonData[i][1]);
+              donutData.addRow([tag, count, count.toString()]);
+              barData.addRow([tag, count]);
+            }
+
+            // 도넛 차트 옵션
+            var donutOptions = {
+              title: 'Top 10 Tags (Donut Chart)',
+              pieHole: 0.4
+            };
+
+            // 열차트 옵션
+            var barOptions = {
+              title: 'Top 10 Tags (Bar Chart)'
+            };
+
+            // 도넛 차트 생성 및 그리기
+            var donutChart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            donutChart.draw(donutData, donutOptions);
+
+            // 열차트 생성 및 그리기
+            var barChart = new google.visualization.ColumnChart(document.getElementById('barchart'));
+            barChart.draw(barData, barOptions);
+          }
+        };
+
+        // 요청 전송
+        xhr.send();
+      }
+    </script>
+  </head>
+  <body>
+    <div id="barchart" style="width: 500px; height: 300px;"></div>
+    <div id="donutchart" style="width: 500px; height: 300px;"></div>
+  </body>
+</html>
