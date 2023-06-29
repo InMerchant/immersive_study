@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* 배경 스타일 */
+        .chat-container {
+            background-color: #F7F7F7;
+            padding: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+        
+        .user-message {
+            background-color: #DCF8C6;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: block;
+            clear: both;
+            text-align: right;
+        }
+        
+        .bot-message {
+            background-color: #E2E2E2;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: block;
+            clear: both;
+            text-align: left;
+        }
+        
+        /* 입력 폼 스타일 */
+        .input-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .input-container input[type="text"] {
+            padding: 5px;
+            width: 300px;
+            font-size: 14px;
+        }
+        
+        .input-container input[type="submit"] {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="bot-message">안녕하세요! 번역을 도와드릴까요?</div>
+        <div id="chat-log"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
+            <input type="submit" value="전송" onclick="sendMessage()">
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 사용자 입력 처리 및 메시지 전송
+        function sendMessage() {
+            var userInput = document.getElementById("user-input").value;
+            if (userInput !== "") {
+                appendMessage("user", userInput);
+                translateMessage(userInput);
+                document.getElementById("user-input").value = "";
+            }
+        }
+
+        // 사용자 및 번역 메시지를 채팅 로그에 추가
+        function appendMessage(sender, message) {
+            var chatLog = document.getElementById("chat-log");
+            var messageDiv = document.createElement("div");
+            messageDiv.className = sender === "user" ? "user-message" : "bot-message";
+            messageDiv.innerHTML = message;
+            chatLog.appendChild(messageDiv);
+            // 가장 최근 메시지를 선택하여 스크롤 위치 조정
+            messageDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+
+        // 긍정과 부정을 체크하기 위한 변수 초기화
+        var score = 0;
+        var negativeThreshold = 10;
+        var Lang = 'ko';
+
+        // 번역 요청
+        function translateMessage(message) {
+        var apiKey = "여기에 키 입력";
+        var apiUrl = "https://translation.googleapis.com/language/translate/v2";
+        var sourceLang = 'ko';
+        var targetLang = "en";
+
+        var requestData = {
+            q: message,
+            source: sourceLang,
+            target: targetLang,
+            key: apiKey
+        };
+
+        $.ajax({
+            url: apiUrl,
+            type: "POST",
+            data: requestData,
+            success: function(response) {
+                var translatedText = response.data.translations[0].translatedText;
+                //appendMessage("bot", sourceLang + ") " + translatedText);
+                // 감정 분석
+                analyzeSentiment(translatedText);
+            },
+            error: function(error) {
+                appendMessage("bot", "번역을 할 수 없습니다.");
+                console.log("번역 오류:", error);
+            }
+        });
+    }
+    // 감정 분석
+    function analyzeSentiment(text) {
+        var apiKey = '여기에 키 입력'; // Cloud Natural Language API 키
+        var apiUrl = 'https://language.googleapis.com/v1/documents:analyzeSentiment';
+
+        var requestData = {
+            document: {
+                content: text,
+                type: 'PLAIN_TEXT'
+            },
+            encodingType: 'UTF8'
+        };
+
+        // Cloud Natural Language API에 요청 보내기
+        fetch(apiUrl + '?key=' + apiKey, {
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            body: JSON.stringify(requestData)
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            var sentimentScore = data.documentSentiment.score;
+            var sentimentMagnitude = data.documentSentiment.magnitude;
+            if (sentimentScore >= 0) {
+                score += 1; // 긍정문장이므로 점수 +1
+            } else {
+                score -= 1; // 부정문장이므로 점수 -1
+            }
+
+            var sentimentLabel = sentimentScore >= 0 ? '긍정' : '부정';
+            var messageWithSentiment = Lang + ') ' + text + ' / 감정: ' + sentimentLabel + ' / score: ' + sentimentScore;
+            appendMessage('bot', messageWithSentiment);
+
+            if (score <= -negativeThreshold) {
+                appendMessage('bot', '경고: 부정적인 메시지가 너무 많습니다!');
+            }
+        })
+        .catch(function (error) {
+            console.log('감정 분석 오류:', error);
+        });
+    }
+    </script>
+</body>
+</html>
