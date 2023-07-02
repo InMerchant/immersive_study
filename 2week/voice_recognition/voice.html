@@ -1,28 +1,30 @@
 <!-- voice.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko-KR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Speech Recognition</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>음성 인식</title>
+    <link rel="stylesheet" href="./voice_style.css" />
   </head>
   <body>
     <div class="container">
-      <button class="speech-recognition">Start Listening!</button>
+      <p id="message1"></p>
+      <p id="message2"></p>
+      <div class="image-container">
+        <div id="circle1" class="highlight-circle" style="display:none; position: relative;"></div>
+        <div id="circle2" class="highlight-circle" style="display: none; position: relative;"></div>
+        <div class="image-button">
+          <img id="photo1" src="감자.jpg" alt="사진" />
+        </div>
+        <div class="image-button">
+          <img id="photo2" src="고구마.jpg" alt="사진" />
+        </div>
+      </div>
+      <button class="speech-recognition">음성 입력 시작</button>
       <h2 class="result"></h2>
-      <div class="user-speech"></div> <!-- 추가 -->
+      <div class="user-speech"></div>
     </div>
-
-    <div class="image-container">
-      <div class="image-button">
-        <img id="photoImage1" src="potato.jpg" alt="Photo">
-      </div>
-      <div class="image-button">
-        <img id="photoImage2" src="sweet potato.jpg" alt="Photo">
-      </div>
-    </div>
-
-    <script src="./script.js"></script>
+    <script src="./voice_script.js"></script>
   </body>
 </html>

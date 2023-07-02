@@ -1,37 +1,27 @@
-*, *::after, *::before {
+*,*::after, *::before{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-.container {
-    height: 50vh;
+.container{
+    height: 100vh;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
 }
 
 .image-container {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
-  
-  .image-container .image-button {
-    margin: 0 1rem;
-  }
-  
-  #photoImage1,
-  #photoImage2 {
-    max-width: 100%;
-    max-height: 100%;
-  }
 
-.speech-recognition {
+.speech-recognition{
     padding: 1rem 2rem;
     border: none;
     border-radius: 5px;
@@ -42,22 +32,22 @@
     margin: 15px 0;
 }
 
-.speech-recognition:hover {
+.speech-recognition:hover{
     padding: 0.5rem 1rem;
 }
 
-.result {
+.result{
     background-color: black;
     color: white;
 }
 
-.circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: green;
+.highlight-circle {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    display: none;
-}
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 2px solid red;
+  }
