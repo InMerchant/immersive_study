@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Object Eater Game</title>
+  </head>
+  <body>
+    <h1>Game Over</h1>
+    <h2>Score: {{ score }}</h2>
+    <button id="gameRestartButton" onclick="window.location.href='/restartGame'">게임 재시작</button>
+    <button id="viewLeaderboardButton" onclick="window.location.href='/leaderboard'">순위 보기</button>
+    <form action="/save_result" method="POST">
+      <label for="name">닉네임 입력: </label>
+      <input type="text" id="name" name="name" required>
+      <input type="hidden" id="score" name="score" value="{{ score }}">
+      <input type="submit" value="게임 결과 저장">
+    </form>
+    {% if success %}
+    <p>Data saved successfully!</p>
+    {% endif %}
+  </body>
+</html>

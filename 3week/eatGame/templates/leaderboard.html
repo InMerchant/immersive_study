@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaderboard</title>
+  </head>
+  <body>
+    <h1>게임 순위</h1>
+    <table>
+      <tr>
+        <th>순위</th>
+        <th>이름</th>
+        <th>점수</th>
+        <th>Timestamp</th>
+      </tr>
+      {% for entry in leaderboard %}
+      <tr>
+        <td>{{ entry.rank }}</td>
+        <td>{{ entry.name }}</td>
+        <td>{{ entry.score }}</td>
+        <td>{{ entry.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <button id="backButton" onclick="window.location.href='/gameOver'">뒤로가기</button>
+  </body>
+</html>
