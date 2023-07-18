@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>나이 분류</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 캡처 버튼 클릭 이벤트
+            $('#capture-btn').click(function() {
+                // Flask 서버로 POST 요청 전송
+                $.ajax({
+                    url: '/',
+                    type: 'POST',
+                    data: { capture: true },
+                    success: function(response) {
+                        $('#result').html('<h2>결과:</h2><p>' + response + '</p>');  // 나이 예측 결과만 표시
+                    },
+                    error: function(error) {
+                        $('#result').html('<p>오류: ' + error.responseText + '</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>나이 분류</h1>
+    <div id="upload-form">
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*">
+            <input type="submit" value="업로드">
+        </form>
+    </div>
+
+    <button id="capture-btn">캡처</button>
+
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
+
+    <div id="result"></div>  <!-- 나이 예측 결과를 동적으로 표시할 빈 div -->
+
+    {% if age %}
+    <script>
+        $(document).ready(function() {
+            $('#result').html('<h2>결과:</h2><p>{{ age }}</p>');  // 나이 예측 결과 표시
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
